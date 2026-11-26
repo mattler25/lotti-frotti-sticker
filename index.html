@@ -9,6 +9,7 @@
 <style>
 :root{color-scheme:light;font:100%/1.5 system-ui,sans-serif;color:#234333;background:#f6efdf}*{box-sizing:border-box}body{margin:0}main{width:min(100% - 2rem,46rem);margin:2rem auto 3rem}header{background:#dbe5cc;border:1px solid #b8c9a9;border-radius:2rem;padding:clamp(1.25rem,5vw,3rem);text-align:center}h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(2.5rem,8vw,5rem);margin:.15em 0}.duo{font-size:3rem}p{margin:.6rem 0}progress{width:100%;height:1rem;accent-color:#356447}#grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;margin-top:1.15rem}button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #95621f;outline-offset:3px}.tile{min-height:6rem;border:1px solid #b5c6a6;border-radius:1rem;background:#fff9ed;color:inherit;padding:.4rem .2rem;display:grid;place-content:center;gap:.1rem}.tile[disabled]{background:#e8e6d7;color:#51594c;cursor:default}.tile b{font:700 1.35rem Georgia,serif}.tile small{font-size:.68rem}.symbol{font-size:1.35rem}dialog{width:min(calc(100% - 2rem),26rem);border:1px solid #b5c6a6;border-radius:1.5rem;background:#fff9ed;color:inherit;text-align:center;padding:1.4rem}dialog::backdrop{background:#172e25aa}dialog img{display:block;width: min(100%,13rem);height:auto;aspect-ratio:1;object-fit:contain;margin:.5rem auto}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1rem}.action{border:1px solid #275038;border-radius:99px;padding:.55rem .85rem;background:#315c42;color:white;text-decoration:none}.close{background:transparent;color:#234333}@media(max-width:360px){#grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
+<link rel="stylesheet" href="album.css">
 </head>
 <body>
 <main>
@@ -912,134 +913,36 @@ DYvvHB+Iv+nWzcOn+UkPryef9Lj+z/jT3v5foNfy53prCZj/r/tf365v17fr2/Xt+vaz2lqC3w/tP7S1
   <h1 style="font-size:clamp(2rem,7vw,4rem);text-wrap:balance">Frottis und Lottis eigenes Stickerbuch</h1>
   <p style="max-width:38ch;margin:.75rem auto 0">Jeden Tag öffnet sich ein neues Türchen. Lade das Motiv als PNG herunter und erstelle daraus deinen eigenen WhatsApp-Sticker.</p>
 </header>
-<section aria-labelledby="album"><h2 id="album">Dein Stickeralbum</h2><p id="status" aria-live="polite"></p><p id="countdown" role="timer" aria-label="Verbleibende Zeit" style="font-size:clamp(1.35rem,5vw,2rem);font-weight:700;font-variant-numeric:tabular-nums" hidden></p><progress id="progress" max="24" value="0" aria-label="Freigeschaltete Sticker"></progress><div id="grid"></div></section>
+<section aria-labelledby="album">
+  <h2 id="album">Dein Stickeralbum</h2>
+  <aside id="preview-notice" hidden>
+    <strong>Vorschau · 24. Dezember</strong>
+    <p>Türchen 1 bis 23 sind bereits ausgepackt. Tippe auf Türchen 24, um die Überraschung zu öffnen.</p>
+    <button id="reset-preview" type="button" class="action close">Vorschau zurücksetzen</button>
+  </aside>
+  <p id="status" aria-live="polite"></p>
+  <p id="countdown" role="timer" aria-label="Verbleibende Zeit" style="font-size:clamp(1.35rem,5vw,2rem);font-weight:700;font-variant-numeric:tabular-nums" hidden></p>
+  <progress id="progress" max="24" value="0" aria-label="Ausgepackte Türchen"></progress>
+  <div id="grid"></div>
+</section>
 <noscript>Aktiviere JavaScript, um das Stickerbuch zu öffnen.</noscript>
 </main>
-<dialog id="preview" aria-labelledby="sticker-title"><h2 id="sticker-title"></h2><img id="picture" width="512" height="512" alt=""><p id="caption"></p><p>Speichere das Bild in deinen Fotos. Öffne dann einen WhatsApp-Chat, tippe auf das Sticker-Symbol und auf „Erstellen“. Wähle dort dein gespeichertes Bild aus.</p><p id="share-message" role="status" hidden>Das Teilen-Menü konnte nicht geöffnet werden. Du kannst das PNG herunterladen oder das Bild gedrückt halten und in Fotos sichern.</p><div class="actions"><button id="share-image" type="button" class="action" hidden>Teilen / in Fotos sichern</button><a id="download" class="action">PNG herunterladen</a><form method="dialog"><button class="action close">Schließen</button></form></div></dialog>
-<script src="stickers/01.js"></script>
-<script>
-'use strict';
-// Map each day to a PNG URL or an embedded PNG data URL.
-const stickerFiles = { 1: window.frottiLottiSticker01 };
-const total = 24;
-const adventYear = 2026;
-// In December, Berlin is on Central European Time (UTC+01:00).
-const openingTimes = Array.from({ length: total }, (_, index) =>
-  Date.parse(adventYear + '-12-' + String(index + 1).padStart(2, '0') + 'T00:00:00+01:00')
-);
-function unlockedCount(now) {
-  const next = openingTimes.findIndex((opening) => now < opening);
-  return next === -1 ? total : next;
-}
-function formatCountdown(milliseconds) {
-  const seconds = Math.ceil(milliseconds / 1000);
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor(seconds / 3600) % 24;
-  const minutes = Math.floor(seconds / 60) % 60;
-  return (days ? days + (days === 1 ? ' Tag · ' : ' Tage · ') : '') +
-    [hours, minutes, seconds % 60].map((value) => String(value).padStart(2, '0')).join(':');
-}
-const grid = document.querySelector('#grid');
-const status = document.querySelector('#status');
-const progress = document.querySelector('#progress');
-const preview = document.querySelector('#preview');
-const picture = document.querySelector('#picture');
-const download = document.querySelector('#download');
-const shareImage = document.querySelector('#share-image');
-const shareMessage = document.querySelector('#share-message');
-let shareFile = null;
-let shareRequest = 0;
-shareImage.addEventListener('click', async () => {
-  if (!shareFile) return;
-  shareMessage.hidden = true;
-  try {
-    await navigator.share({ files: [shareFile] });
-  } catch (error) {
-    if (error.name !== 'AbortError') shareMessage.hidden = false;
-  }
-});
-const tiles = [];
-function placeholder(day) {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = day % 2 ? '#dbe5cc' : '#f2dfc0';
-  ctx.beginPath();
-  ctx.arc(256, 256, 224, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.textAlign = 'center';
-  ctx.font = '150px "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
-  ctx.fillText(day % 2 ? '🐸' : '🐭', 256, 288);
-  ctx.fillStyle = '#234333';
-  ctx.font = 'bold 29px system-ui';
-  ctx.fillText('Platzhalter · Tag ' + day, 256, 366);
-  return canvas.toDataURL('image/png');
-}
-function showSticker(day) {
-  document.querySelector('#sticker-title').textContent = 'Sticker ' + day;
-  const real = stickerFiles[day];
-  const label = real ? 'Frotti & Lotti · Sticker ' + day : 'Platzhalter für Sticker ' + day;
-  picture.alt = label;
-  picture.src = real || placeholder(day);
-  document.querySelector('#caption').textContent = label;
-  download.href = picture.src;
-  download.download = 'frotti-lotti-' + String(day).padStart(2, '0') + '.png';
-  shareImage.hidden = true;
-  shareMessage.hidden = true;
-  shareFile = null;
-  const request = ++shareRequest;
-  if (typeof navigator.canShare === 'function' && typeof navigator.share === 'function') {
-    fetch(download.href)
-      .then((response) => {
-        if (!response.ok) throw new Error('PNG unavailable');
-        return response.blob();
-      })
-      .then((blob) => {
-        if (request !== shareRequest) return;
-        const file = new File([blob], download.download, { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          shareFile = file;
-          shareImage.hidden = false;
-        }
-      })
-      .catch(() => { /* The PNG download remains available. */ });
-  }
-  preview.showModal();
-}
-for (let day = 1; day <= total; day++) {
-  const tile = document.createElement('button');
-  tile.className = 'tile';
-  tile.type = 'button';
-  tile.innerHTML = '<span class="symbol" aria-hidden="true"></span><b>' + day + '</b><small></small>';
-  tile.addEventListener('click', () => showSticker(day));
-  grid.append(tile);
-  tiles.push(tile);
-}
-const countdown = document.querySelector('#countdown');
-let lastUnlocked = -1;
-function render() {
-  const now = Date.now();
-  const unlocked = unlockedCount(now);
-  if (unlocked !== lastUnlocked) {
-    lastUnlocked = unlocked;
-    progress.value = unlocked;
-    status.textContent = unlocked + ' von 24 offen · ' + (unlocked === total
-      ? 'Dein Album ist komplett!'
-      : 'Türchen ' + (unlocked + 1) + ' öffnet am ' + (unlocked + 1) + '. Dezember um 00:00 Uhr (deutsche Zeit).');
-    countdown.hidden = unlocked === total;
-    tiles.forEach((tile, index) => {
-      const open = index < unlocked;
-      tile.disabled = !open;
-      tile.querySelector('.symbol').textContent = open ? (index % 2 ? '🐭' : '🐸') : '🔒';
-      tile.querySelector('small').textContent = open ? (stickerFiles[index + 1] ? 'Sticker' : 'Platzhalter') : 'Geschlossen';
-    });
-  }
-  if (unlocked < total) countdown.textContent = formatCountdown(openingTimes[unlocked] - now);
-}
-render();
-window.addEventListener('pageshow', render);
-document.addEventListener('visibilitychange', render);
-setInterval(render, 250);
-</script>
+<dialog id="preview" aria-labelledby="sticker-title">
+  <div class="dialog-heading">
+    <h2 id="sticker-title"></h2>
+    <form method="dialog"><button class="action close" autofocus>Schließen</button></form>
+  </div>
+  <div id="gift-opening" class="gift-opening" aria-hidden="true" hidden>
+    <div class="gift-box"><div class="gift-lid"></div></div>
+    <span class="snowflake" style="--x:-6rem;--y:-4rem">❄</span>
+    <span class="snowflake" style="--x:4rem;--y:-5rem">✦</span>
+    <span class="snowflake" style="--x:-5rem;--y:3rem">✧</span>
+    <span class="snowflake" style="--x:5rem;--y:2rem">❄</span>
+    <span class="snowflake" style="--x:-1rem;--y:-5.5rem">❄</span>
+  </div>
+  <div id="sticker-cards"></div>
+  <p class="whatsapp-help">Speichere dein Lieblingsmotiv in Fotos. Öffne dann einen WhatsApp-Chat und wähle im Sticker-Menü „Erstellen“, um das Bild hinzuzufügen.</p>
+</dialog>
+<script src="album.js"></script>
 </body>
 </html>
