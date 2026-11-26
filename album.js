@@ -114,6 +114,57 @@ function makeCard(id, label) {
   return card;
 }
 
+function makeBonusGallery() {
+  const gallery = document.createElement('section');
+  gallery.setAttribute('aria-labelledby', 'bonus-title');
+  const heading = document.createElement('h3');
+  heading.id = 'bonus-title';
+  heading.textContent = '8 Bonus-Sticker';
+  const thumbnails = document.createElement('div');
+  thumbnails.className = 'bonus-grid';
+  const detail = document.createElement('div');
+  detail.id = 'bonus-detail';
+  detail.className = 'bonus-detail';
+  detail.hidden = true;
+  let selected;
+
+  for (let bonus = 1; bonus <= 8; bonus++) {
+    const id = '24.' + bonus;
+    const label = 'Bonus ' + bonus;
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'bonus-tile';
+    tile.setAttribute('aria-controls', detail.id);
+    tile.setAttribute('aria-expanded', 'false');
+    const thumbnail = document.createElement('img');
+    thumbnail.src = stickerPath(id);
+    thumbnail.alt = '';
+    thumbnail.width = thumbnail.height = 128;
+    thumbnail.loading = 'lazy';
+    const name = document.createElement('span');
+    name.textContent = label;
+    tile.append(thumbnail, name);
+    tile.addEventListener('click', () => {
+      if (selected === tile) {
+        detail.hidden = true;
+        detail.replaceChildren();
+        tile.setAttribute('aria-expanded', 'false');
+        selected = undefined;
+        return;
+      }
+      if (selected) selected.setAttribute('aria-expanded', 'false');
+      selected = tile;
+      tile.setAttribute('aria-expanded', 'true');
+      detail.replaceChildren(makeCard(id, label));
+      detail.hidden = false;
+      detail.scrollIntoView({ block: 'nearest' });
+    });
+    thumbnails.append(tile);
+  }
+  gallery.append(heading, thumbnails, detail);
+  return gallery;
+}
+
 let animationTimer;
 function showDoor(day) {
   if (now() < openingTimes[day - 1] || preview.open) return;
@@ -122,14 +173,7 @@ function showDoor(day) {
   render();
   title.textContent = day === 24 ? 'Frohe Weihnachten!' : 'Türchen ' + day;
   const cards = [makeCard(day, day === 24 ? 'Weihnachtssticker' : 'Sticker ' + day)];
-  if (day === 24) {
-    const heading = document.createElement('h3');
-    heading.textContent = '8 Bonus-Sticker';
-    cards.push(heading);
-    for (let bonus = 1; bonus <= 8; bonus++) {
-      cards.push(makeCard('24.' + bonus, 'Bonus ' + bonus));
-    }
-  }
+  if (day === 24) cards.push(makeBonusGallery());
   const animate = firstOpen && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   cardList.replaceChildren(...cards);
   cardList.hidden = animate;
@@ -161,6 +205,7 @@ function render() {
   const time = now();
   const next = openingTimes.findIndex((opening) => opening > time);
   const available = next === -1 ? total : next;
+  const today = time < openingTimes[total - 1] + 86400000 ? available : 0;
   const unwrapped = [...opened].filter((day) => day <= available).length;
   const message = unwrapped + ' von 24 ausgepackt · ' + (available < total
     ? 'Türchen ' + (available + 1) + ' öffnet am ' + (available + 1) + '. Dezember um 00:00 Uhr deutscher Zeit.'
@@ -173,6 +218,8 @@ function render() {
   tiles.forEach((tile, index) => {
     const day = index + 1;
     const state = day > available ? 'locked' : opened.has(day) ? 'opened' : 'ready';
+    const highlighted = day === today && state === 'ready';
+    if ((tile.dataset.today === 'true') !== highlighted) tile.dataset.today = String(highlighted);
     if (tileStates[index] === state) return;
     tileStates[index] = state;
     tile.dataset.state = state;
