@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f6efdf">
 <meta name="robots" content="noindex">
-<title>Frotti &amp; Lotti · Stickerbuch</title>
+<title>Frottis und Lottis eigenes Stickerbuch</title>
 <style>
 :root{color-scheme:light;font:100%/1.5 system-ui,sans-serif;color:#234333;background:#f6efdf}*{box-sizing:border-box}body{margin:0}main{width:min(100% - 2rem,46rem);margin:2rem auto 3rem}header{background:#dbe5cc;border:1px solid #b8c9a9;border-radius:2rem;padding:clamp(1.25rem,5vw,3rem);text-align:center}h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(2.5rem,8vw,5rem);margin:.15em 0}.duo{font-size:3rem}p{margin:.6rem 0}progress{width:100%;height:1rem;accent-color:#356447}#grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;margin-top:1.15rem}button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #95621f;outline-offset:3px}.tile{min-height:6rem;border:1px solid #b5c6a6;border-radius:1rem;background:#fff9ed;color:inherit;padding:.4rem .2rem;display:grid;place-content:center;gap:.1rem}.tile[disabled]{background:#e8e6d7;color:#51594c;cursor:default}.tile b{font:700 1.35rem Georgia,serif}.tile small{font-size:.68rem}.symbol{font-size:1.35rem}dialog{width:min(calc(100% - 2rem),26rem);border:1px solid #b5c6a6;border-radius:1.5rem;background:#fff9ed;color:inherit;text-align:center;padding:1.4rem}dialog::backdrop{background:#172e25aa}dialog img{display:block;width: min(100%,13rem);height:auto;aspect-ratio:1;object-fit:contain;margin:.5rem auto}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1rem}.action{border:1px solid #275038;border-radius:99px;padding:.55rem .85rem;background:#315c42;color:white;text-decoration:none}.close{background:transparent;color:#234333}@media(max-width:360px){#grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
@@ -909,13 +909,13 @@ idZ1QQnWnYEJ1k/946x/C4izng6Ms14xAVDATnYGXC0RawAWcMT9GCSVKzYwwXohMMF2ODTZ8W8hSfYP
 2y/Dsssv03bAJ8P6O58My795p1v+5JUW8bVXasRB7zTLIe80yzfe6ZZDPhnWI76ZtoM+mZaD3hm2v/lk2f7gk2n9wjfd8pF/lm2vX6Z1T0C27d2AHPtqvyzbMp8M6+zAHOtvgtvZRoe0tecH5FgG+mVG9LJ2iOwcfWt0kqVjSjiOt+VruL79y7YfutD/0M/11hIYW+7f
 d9/r239z69atmw/+p2Nbxyag1hiRbL8jvJW1e2ic5f6QRGvf0ETb0PAkxwhk+GJuZkRrR1l4kr0qPMUxMizeMjAkyfpoaJLlgYhW9q629OhOcVlxaa3aREZ17BgThKjSls93fbu+Xd/+h1u/5f28U3um+id1SwqI6RgTZOloCQ+/ITwiFLXZzvFW3EbeEhmFWi2+tt5s
 DYvvHB+Iv+nWzcOn+UkPryef9Lj+z/jT3v5foNfy53prCZj/r/tf365v17fr2/Xt+vaz2lqC3w/tP7S1vN//6/7Xt3/Ndv19+Qlu/x+Ou+yDu7e1VwAAAABJRU5ErkJggg==">
-  <h1>Frotti &amp; Lotti</h1>
-  <p>Das Stickerbuch mit 24 Türchen</p>
+  <h1 style="font-size:clamp(2rem,7vw,4rem);text-wrap:balance">Frottis und Lottis eigenes Stickerbuch</h1>
+  <p style="max-width:38ch;margin:.75rem auto 0">Jeden Tag öffnet sich ein neues Türchen. Lade das Motiv als PNG herunter und erstelle daraus deinen eigenen WhatsApp-Sticker.</p>
 </header>
 <section aria-labelledby="album"><h2 id="album">Dein Stickeralbum</h2><p id="status" aria-live="polite"></p><p id="countdown" role="timer" aria-label="Verbleibende Zeit" style="font-size:clamp(1.35rem,5vw,2rem);font-weight:700;font-variant-numeric:tabular-nums" hidden></p><progress id="progress" max="24" value="0" aria-label="Freigeschaltete Sticker"></progress><div id="grid"></div></section>
 <noscript>Aktiviere JavaScript, um das Stickerbuch zu öffnen.</noscript>
 </main>
-<dialog id="preview" aria-labelledby="sticker-title"><h2 id="sticker-title"></h2><img id="picture" width="512" height="512" alt=""><p id="caption"></p><p>Speichere das Bild und wähle es in WhatsApp beim Erstellen eines Stickers aus.</p><div class="actions"><a id="download" class="action">PNG speichern</a><form method="dialog"><button class="action close">Schließen</button></form></div></dialog>
+<dialog id="preview" aria-labelledby="sticker-title"><h2 id="sticker-title"></h2><img id="picture" width="512" height="512" alt=""><p id="caption"></p><p>Speichere das Bild in deinen Fotos. Öffne dann einen WhatsApp-Chat, tippe auf das Sticker-Symbol und auf „Erstellen“. Wähle dort dein gespeichertes Bild aus.</p><p id="share-message" role="status" hidden>Das Teilen-Menü konnte nicht geöffnet werden. Du kannst das PNG herunterladen oder das Bild gedrückt halten und in Fotos sichern.</p><div class="actions"><button id="share-image" type="button" class="action" hidden>Teilen / in Fotos sichern</button><a id="download" class="action">PNG herunterladen</a><form method="dialog"><button class="action close">Schließen</button></form></div></dialog>
 <script>
 'use strict';
 // For real stickers, map a day to a same-site transparent PNG, e.g. 1: 'stickers/01.png'.
@@ -944,6 +944,19 @@ const progress = document.querySelector('#progress');
 const preview = document.querySelector('#preview');
 const picture = document.querySelector('#picture');
 const download = document.querySelector('#download');
+const shareImage = document.querySelector('#share-image');
+const shareMessage = document.querySelector('#share-message');
+let shareFile = null;
+let shareRequest = 0;
+shareImage.addEventListener('click', async () => {
+  if (!shareFile) return;
+  shareMessage.hidden = true;
+  try {
+    await navigator.share({ files: [shareFile] });
+  } catch (error) {
+    if (error.name !== 'AbortError') shareMessage.hidden = false;
+  }
+});
 const tiles = [];
 function placeholder(day) {
   const canvas = document.createElement('canvas');
@@ -970,6 +983,26 @@ function showSticker(day) {
   document.querySelector('#caption').textContent = label;
   download.href = picture.src;
   download.download = 'frotti-lotti-' + String(day).padStart(2, '0') + '.png';
+  shareImage.hidden = true;
+  shareMessage.hidden = true;
+  shareFile = null;
+  const request = ++shareRequest;
+  if (typeof navigator.canShare === 'function' && typeof navigator.share === 'function') {
+    fetch(download.href)
+      .then((response) => {
+        if (!response.ok) throw new Error('PNG unavailable');
+        return response.blob();
+      })
+      .then((blob) => {
+        if (request !== shareRequest) return;
+        const file = new File([blob], download.download, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          shareFile = file;
+          shareImage.hidden = false;
+        }
+      })
+      .catch(() => { /* The PNG download remains available. */ });
+  }
   preview.showModal();
 }
 for (let day = 1; day <= total; day++) {
