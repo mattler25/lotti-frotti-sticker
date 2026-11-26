@@ -916,10 +916,11 @@ DYvvHB+Iv+nWzcOn+UkPryef9Lj+z/jT3v5foNfy53prCZj/r/tf365v17fr2/Xt+vaz2lqC3w/tP7S1
 <noscript>Aktiviere JavaScript, um das Stickerbuch zu öffnen.</noscript>
 </main>
 <dialog id="preview" aria-labelledby="sticker-title"><h2 id="sticker-title"></h2><img id="picture" width="512" height="512" alt=""><p id="caption"></p><p>Speichere das Bild in deinen Fotos. Öffne dann einen WhatsApp-Chat, tippe auf das Sticker-Symbol und auf „Erstellen“. Wähle dort dein gespeichertes Bild aus.</p><p id="share-message" role="status" hidden>Das Teilen-Menü konnte nicht geöffnet werden. Du kannst das PNG herunterladen oder das Bild gedrückt halten und in Fotos sichern.</p><div class="actions"><button id="share-image" type="button" class="action" hidden>Teilen / in Fotos sichern</button><a id="download" class="action">PNG herunterladen</a><form method="dialog"><button class="action close">Schließen</button></form></div></dialog>
+<script src="stickers/01.js"></script>
 <script>
 'use strict';
-// For real stickers, map a day to a same-site transparent PNG, e.g. 1: 'stickers/01.png'.
-const stickerFiles = {};
+// Map each day to a PNG URL or an embedded PNG data URL.
+const stickerFiles = { 1: window.frottiLottiSticker01 };
 const total = 24;
 const adventYear = 2026;
 // In December, Berlin is on Central European Time (UTC+01:00).
