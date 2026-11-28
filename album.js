@@ -42,9 +42,7 @@ const cardList = document.querySelector('#sticker-cards');
 const gift = document.querySelector('#gift-opening');
 const replay = document.querySelector('#reset-preview');
 const sleigh = document.querySelector('#sleigh');
-const launch = document.querySelector('#launch-sleigh');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-let sleighTimer;
 const tileStates = [];
 const tiles = openingTimes.map((_, index) => {
   const tile = document.createElement('button');
@@ -284,26 +282,37 @@ window.addEventListener('pageshow', render);
 document.addEventListener('visibilitychange', render);
 setInterval(render, 250);
 
+const flightPaths = [
+  ['right', 12, 14, 10],
+  ['left', 24, 20, 23],
+  ['right', 55, 35, 12],
+  ['left', 11, 30, 50],
+  ['right', 14, 37, 55],
+  ['left', 55, 36, 13],
+];
+let lastFlight = -1;
+
 function flySleigh() {
-  if (preview.open) return;
-  clearTimeout(sleighTimer);
+  if (document.hidden || preview.open || reducedMotion.matches || !sleigh.hidden) return;
+  const options = flightPaths.filter((_, index) => index !== lastFlight);
+  const path = options[Math.floor(Math.random() * options.length)];
+  lastFlight = flightPaths.indexOf(path);
+  const [direction, start, middle, end] = path;
+  sleigh.dataset.direction = direction;
+  sleigh.style.setProperty('--start-y', start + 'vh');
+  sleigh.style.setProperty('--mid-y', middle + 'vh');
+  sleigh.style.setProperty('--end-y', end + 'vh');
+  sleigh.style.setProperty('--flight-duration', (6 + Math.random() * 2) + 's');
   sleigh.hidden = false;
-  sleigh.classList.remove('sleigh-flight', 'sleigh-still');
-  if (reducedMotion.matches) {
-    sleigh.classList.add('sleigh-still');
-    sleighTimer = setTimeout(() => { sleigh.hidden = true; }, 3500);
-    return;
-  }
-  // Repeated button presses restart the flight.
-  void sleigh.offsetWidth;
-  sleigh.classList.add('sleigh-flight');
-  sleighTimer = setTimeout(() => { sleigh.hidden = true; }, 7800);
 }
 
-function flyIfIdle() {
-  if (!document.hidden && !preview.open && sleigh.hidden && !reducedMotion.matches) flySleigh();
+function scheduleFlight(minimum, variation) {
+  setTimeout(() => {
+    flySleigh();
+    scheduleFlight(17000, 19000);
+  }, minimum + Math.random() * variation);
 }
 
-launch.addEventListener('click', flySleigh);
-setTimeout(flyIfIdle, 12000);
-setInterval(flyIfIdle, 55000);
+sleigh.addEventListener('animationend', () => { sleigh.hidden = true; });
+sleigh.addEventListener('animationcancel', () => { sleigh.hidden = true; });
+scheduleFlight(5000, 6500);
