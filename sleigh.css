@@ -1,0 +1,34 @@
+.sleigh-action { margin: .8rem auto 0; }
+.sleigh-action:hover { background: #fff9ed; }
+.sleigh {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  top: clamp(3.5rem, 16vh, 10rem);
+  width: clamp(10rem, 40vw, 19rem);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 .2rem .35rem #23433340);
+}
+.sleigh-flight { animation: fly-sleigh 7.6s linear both; }
+.sleigh-still { left: 50%; transform: translateX(-50%); }
+@keyframes fly-sleigh {
+  0% { transform: translate3d(calc(-100% - 1rem), 1.2rem, 0) rotate(-6deg); }
+  25% { transform: translate3d(calc(25vw - 75%), -.45rem, 0) rotate(2deg); }
+  50% { transform: translate3d(calc(50vw - 50%), .9rem, 0) rotate(-4deg); }
+  75% { transform: translate3d(calc(75vw - 25%), -.8rem, 0) rotate(2deg); }
+  100% { transform: translate3d(calc(100vw + 1rem), -1.7rem, 0) rotate(-6deg); }
+}
+.holiday-greeting {
+  margin: .4rem 0 .8rem;
+  padding: .75rem .9rem;
+  background: #f5e8ca;
+  color: #4a3525;
+  border: 1px solid #c59964;
+  border-radius: .8rem;
+}
+.holiday-greeting strong { color: #803f36; }
+.holiday-greeting p { margin-bottom: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .sleigh-flight { animation: none; left: 50%; transform: translateX(-50%); }
+}

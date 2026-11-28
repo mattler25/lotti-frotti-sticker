@@ -41,6 +41,10 @@ const title = document.querySelector('#sticker-title');
 const cardList = document.querySelector('#sticker-cards');
 const gift = document.querySelector('#gift-opening');
 const replay = document.querySelector('#reset-preview');
+const sleigh = document.querySelector('#sleigh');
+const launch = document.querySelector('#launch-sleigh');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let sleighTimer;
 const tileStates = [];
 const tiles = openingTimes.map((_, index) => {
   const tile = document.createElement('button');
@@ -114,6 +118,22 @@ function makeCard(id, label) {
   return card;
 }
 
+function holidayGreeting(day) {
+  const greeting = document.createElement('div');
+  greeting.className = 'holiday-greeting';
+  const headline = document.createElement('strong');
+  const message = document.createElement('p');
+  if (day === 6) {
+    headline.textContent = 'Fröhlichen Nikolaus, Maus!';
+    message.textContent = 'Frotti und Lotti schicken dir liebe Nikolausgrüße. Schau mal, was sie dir in die Stiefel gesteckt haben!';
+  } else {
+    headline.textContent = 'Ho, ho, ho! Frohe Weihnachten, Maus!';
+    message.textContent = 'Frotti und Lotti wünschen dir einen richtig schönen Heiligabend. Danke, dass du jeden Tag mit uns ein Türchen geöffnet hast. Zum Schluss haben wir noch acht Bonussticker für dich!';
+  }
+  greeting.append(headline, message);
+  return greeting;
+}
+
 function makeBonusGallery() {
   const gallery = document.createElement('section');
   gallery.setAttribute('aria-labelledby', 'bonus-title');
@@ -173,6 +193,7 @@ function showDoor(day) {
   render();
   title.textContent = day === 24 ? 'Frohe Weihnachten!' : 'Türchen ' + day;
   const cards = [makeCard(day, day === 24 ? 'Weihnachtssticker' : 'Sticker ' + day)];
+  if (day === 6 || day === 24) cards.unshift(holidayGreeting(day));
   if (day === 24) cards.push(makeBonusGallery());
   const animate = firstOpen && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   cardList.replaceChildren(...cards);
@@ -262,3 +283,27 @@ render();
 window.addEventListener('pageshow', render);
 document.addEventListener('visibilitychange', render);
 setInterval(render, 250);
+
+function flySleigh() {
+  if (preview.open) return;
+  clearTimeout(sleighTimer);
+  sleigh.hidden = false;
+  sleigh.classList.remove('sleigh-flight', 'sleigh-still');
+  if (reducedMotion.matches) {
+    sleigh.classList.add('sleigh-still');
+    sleighTimer = setTimeout(() => { sleigh.hidden = true; }, 3500);
+    return;
+  }
+  // Repeated button presses restart the flight.
+  void sleigh.offsetWidth;
+  sleigh.classList.add('sleigh-flight');
+  sleighTimer = setTimeout(() => { sleigh.hidden = true; }, 7800);
+}
+
+function flyIfIdle() {
+  if (!document.hidden && !preview.open && sleigh.hidden && !reducedMotion.matches) flySleigh();
+}
+
+launch.addEventListener('click', flySleigh);
+setTimeout(flyIfIdle, 12000);
+setInterval(flyIfIdle, 55000);
